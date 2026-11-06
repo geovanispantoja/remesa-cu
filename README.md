@@ -12,7 +12,7 @@ remesa-cu/
 │   ├── config.js             URL de Supabase + publishable key + correo del admin (llenar una vez)
 │   └── remesa-api.js         funciones JS que usan la PWA y la web de admin
 ├── admin/                    web de admin (B): index.html, app.js, estilos.css
-├── cliente/                  (próximo) PWA del cliente
+├── cliente/                  PWA del cliente (A): se instala en el teléfono
 └── pruebas/                  pruebas del backend y de la web en local
 ```
 
@@ -152,8 +152,29 @@ Solo pide la contraseña del usuario admin.
 | **Clientes** | Buscar, cambiar el gestor, mandar WhatsApp, crear una remesa a nombre del cliente. |
 | **Plantillas** y **Ajustes** | Editar los textos de WhatsApp, la tarifa, los límites y la contraseña. |
 
+## App del cliente (PWA)
+
+`https://geovanispantoja.github.io/remesa-cu/cliente/` se abre en cualquier teléfono. Desde ahí se instala como app: en Android con el botón "Instalar" de Mi cuenta, y en iPhone con Safari → Compartir → Agregar a pantalla de inicio.
+
+- **Sin cuenta:** entrar, crear cuenta, recuperar contraseña y una calculadora ("si tu familia recibe $350, depositas $390").
+- **Enviar:** monto con botones rápidos, cálculo de la tarifa en vivo, elegir familiar, código de gestor y nota.
+- **Seguimiento:**
+  - A qué Zelle depositar, con botones para copiar el correo, el memo y el monto.
+  - Botón "Ya deposité", con captura opcional.
+  - Los 4 pasos del estado y el recibo firmado cuando se entrega.
+- **Remesas, Familiares y Mi cuenta.** El cliente puede cancelar una remesa solo mientras no haya avisado que pagó.
+- **Sin señal:** la app guarda sus archivos en el teléfono y abre igual. Los datos siempre se piden en vivo.
+
+**Enlace de gestor:** `…/cliente/?g=GES-001`. Quien se registra entrando por ese enlace queda con ese gestor y le genera comisión. En la web de admin → Gestores, el botón "Copiar enlace" lo arma solo.
+
+**Para que funcionen los correos de confirmación y de "olvidé la contraseña"** (paso 3 de la instalación), en Supabase → Authentication → URL Configuration:
+- *Site URL*: `https://geovanispantoja.github.io/remesa-cu/cliente/`
+- *Redirect URLs*: `https://geovanispantoja.github.io/remesa-cu/cliente/**`
+
+En Ajustes de la web de admin pon esa misma dirección en `url_app`, para que salga en los mensajes.
+
 ### Probarla en tu computadora sin tocar Supabase
-`pruebas/navegador/preparar.sh` levanta una copia local con datos de demo: necesita Postgres local y el binario de [PostgREST](https://github.com/PostgREST/postgrest/releases). Luego abre `http://localhost:8080/admin/` con la contraseña `admin123`. `node pruebas/navegador/admin.e2e.mjs` recorre toda la web en un navegador automático, y GitHub Actions lo corre en cada push.
+`pruebas/navegador/preparar.sh` levanta una copia local con datos de demo: necesita Postgres local y el binario de [PostgREST](https://github.com/PostgREST/postgrest/releases). Luego abre `http://localhost:8080/admin/` (contraseña `admin123`) o `http://localhost:8080/cliente/` (ana@correo.com / ana123). `admin.e2e.mjs` y `cliente.e2e.mjs`, en `pruebas/navegador/`, recorren las dos webs en un navegador automático, y GitHub Actions los corre en cada push.
 
 ### Para probar desde cero
 `supabase/limpiar_pruebas.sql` borra remesas, historial, mensajes y fotos, y reinicia los códigos en REM-0001. Conserva configuración, plantillas, gestores, cuentas y clientes.

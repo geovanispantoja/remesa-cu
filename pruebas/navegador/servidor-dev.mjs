@@ -106,9 +106,24 @@ http.createServer(async (req, res) => {
       const s = email && await sesionPara(email);
       return s ? json(res, 200, s) : json(res, 400, { error: 'invalid_grant', msg: 'Invalid Refresh Token' });
     }
+    if (url.pathname === '/auth/v1/signup') {
+      const cuerpo = JSON.parse((await leerCuerpo(req)).toString() || '{}');
+      const email = String(cuerpo.email ?? '').toLowerCase();
+      if (CLAVES[email]) return json(res, 422, { code: 'user_already_exists', msg: 'User already registered' });
+      if (String(cuerpo.password ?? '').length < 6) return json(res, 422, { code: 'weak_password', msg: 'Password should be at least 6 characters.' });
+      await db.query('insert into auth.users (email, raw_user_meta_data) values ($1, $2)', [email, cuerpo.data ?? {}]);
+      CLAVES[email] = cuerpo.password;
+      return json(res, 200, await sesionPara(email)); // como si "Confirm email" estuviera apagado
+    }
+    if (url.pathname === '/auth/v1/recover') return json(res, 200, {});
     if (url.pathname === '/auth/v1/user') {
       const u = usuarioDe(req);
-      return u ? json(res, 200, (await sesionPara(u.email)).user) : json(res, 401, { msg: 'invalid JWT' });
+      if (!u) return json(res, 401, { msg: 'invalid JWT' });
+      if (req.method === 'PUT') {
+        const cuerpo = JSON.parse((await leerCuerpo(req)).toString() || '{}');
+        if (cuerpo.password) CLAVES[u.email] = cuerpo.password;
+      }
+      return json(res, 200, (await sesionPara(u.email)).user);
     }
     if (url.pathname === '/auth/v1/logout') { res.writeHead(204, cors); return res.end(); }
 

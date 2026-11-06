@@ -872,6 +872,7 @@ async function vistaGestores(ctx) {
         <td data-m="todo" class="der"><div class="fila" style="justify-content:flex-end">
           ${Number(g.comision_pendiente) > 0 ? `<button class="boton chico" type="button" data-pagar="${g.gestor_id}">Pagar ${usd(g.comision_pendiente)}</button>` : ''}
           <button class="boton chico" type="button" data-wa="${g.gestor_id}">WhatsApp</button>
+          <button class="boton chico" type="button" data-enlace="${esc(g.codigo)}">Copiar enlace</button>
           <button class="boton chico" type="button" data-editar="${g.gestor_id}">Editar</button></div></td>
       </tr>`).join('') : '<tr><td colspan="6"><div class="vacio">Todavía no hay gestores</div></td></tr>'}</tbody>
     </table></div></section>`);
@@ -883,6 +884,11 @@ async function vistaGestores(ctx) {
     titulo: `WhatsApp a ${buscar(b.dataset.wa)?.nombre}`,
     destinos: [{ dest: 'gestor', contexto: { gestorId: Number(b.dataset.wa) }, plantilla: 'gestor_resumen_mes' }],
   })));
+  $$('[data-enlace]').forEach((b) => b.addEventListener('click', async () => {
+    const url = `${location.origin}${location.pathname.replace(/admin\/.*$/, 'cliente/')}?g=${encodeURIComponent(b.dataset.enlace)}`;
+    try { await navigator.clipboard.writeText(url); aviso('Enlace copiado: quien entre por ahí queda con este gestor'); }
+    catch { ventana('Enlace del gestor', `<input type="text" readonly value="${esc(url)}">`); }
+  }));
   $$('[data-pagar]').forEach((b) => b.addEventListener('click', async () => {
     const g = res.find((x) => x.gestor_id === Number(b.dataset.pagar));
     if (!(await confirmar('Pagar comisiones', `¿Ya le diste <strong>${usd(g.comision_pendiente)}</strong> en efectivo a ${esc(g.nombre)}? Se marcan pagadas todas sus remesas entregadas pendientes.`, { boton: 'Sí, ya se lo di' }))) return;
