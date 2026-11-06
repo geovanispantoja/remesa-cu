@@ -8,11 +8,11 @@
 // =====================================================================
 
 const produccion = {
-  supabaseUrl: 'https://TU-PROYECTO.supabase.co',
-  supabaseKey: 'sb_publishable_PEGA_AQUI_TU_CLAVE',
+  supabaseUrl: 'https://cxckyqyrpyfegwcfmdaf.supabase.co',
+  supabaseKey: 'sb_publishable_jDdUS4XwX9_aPnd8ZjnubQ_SmJIQu2K',
   // Correo del usuario admin creado en Supabase → Authentication → Users.
   // La web de admin solo pide la contraseña de este usuario.
-  correoAdmin: 'admin@remesa.cu',
+  correoAdmin: 'cuba.ages@gmail.com',
 };
 
 // Al abrir la web en tu propia computadora (pruebas/navegador/preparar.sh) usa el Supabase de prueba local.
@@ -24,5 +24,5 @@ const local = {
 
 const enLocal = ['localhost', '127.0.0.1'].includes(globalThis.location?.hostname);
 export const CONFIG = enLocal ? local : produccion;
-export const CONFIG_LISTA = !CONFIG.supabaseUrl.includes('TU-PROYECTO') && !CONFIG.supabaseKey.includes('PEGA_AQUI');
+export const CONFIG_LISTA = Boolean(CONFIG.supabaseUrl && CONFIG.supabaseKey);
 export const SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm';
