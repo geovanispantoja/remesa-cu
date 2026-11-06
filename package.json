@@ -1,0 +1,9 @@
+{
+  "name": "remesa-cu",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test compartido/remesa-api.test.mjs",
+    "test:sql": "./pruebas/correr.sh"
+  }
+}
