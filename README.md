@@ -84,7 +84,7 @@ Marcadores que se pueden usar: `{codigo} {cliente} {beneficiario} {direccion} {m
 - **El cliente** ve solo su perfil, sus familiares y sus remesas, y nunca ve comisiones ni notas del admin. No puede cambiarse el rol ni el gestor.
 - **El admin** ve todo, pero los estados y el dinero solo se cambian con las funciones `admin_*`. Editando la tabla directo solo se pueden cambiar las notas.
 - Fotos: `comprobantes/<uid del cliente>/…` (capturas del Zelle) y `recibos/<id remesa>/…` (recibos firmados). Las dos carpetas son privadas y cada cliente ve solo lo suyo.
-- La clave `anon` de Supabase va dentro de las webs. Es pública por diseño: lo que protege los datos son estas reglas.
+- La clave pública de Supabase (*publishable key*, `sb_publishable_…`; antes se llamaba `anon`) va dentro de las webs. Es pública por diseño: lo que protege los datos son estas reglas.
 
 ---
 
@@ -122,7 +122,11 @@ update configuracion set valor = 'https://geovanispantoja.github.io/remesa-cu/cl
 ```
 
 ### 5. Que Supabase no se duerma
-El plan gratis pausa el proyecto si pasa una semana sin uso. En GitHub → **Settings → Secrets and variables → Actions** agrega `SUPABASE_URL` y `SUPABASE_ANON_KEY` (están en Supabase → **Project Settings → API**). Con eso, el workflow `mantener-activo.yml` le hace una consulta cada 3 días.
+El plan gratis pausa el proyecto si pasa una semana sin uso. En GitHub → **Settings → Secrets and variables → Actions** agrega dos secretos:
+- `SUPABASE_URL`: `https://<id-del-proyecto>.supabase.co`. El id es lo que sale en la dirección del panel, después de `/project/`. También aparece en el botón **Connect** de arriba.
+- `SUPABASE_PUBLISHABLE_KEY`: en Supabase → **Project Settings → API Keys**, la que empieza con `sb_publishable_…`. La `secret` (`sb_secret_…`) NO se usa nunca en las webs.
+
+Con eso, el workflow `mantener-activo.yml` le hace una consulta cada 3 días.
 
 ### Para probar desde cero
 `supabase/limpiar_pruebas.sql` borra remesas, historial, mensajes y fotos, y reinicia los códigos en REM-0001. Conserva configuración, plantillas, gestores, cuentas y clientes.

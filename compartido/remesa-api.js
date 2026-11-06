@@ -5,11 +5,11 @@
 //   <script type="module">
 //     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm';
 //     import { crearApiCliente, crearApiAdmin } from './compartido/remesa-api.js';
-//     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+//     const sb = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);  // sb_publishable_…
 //     const api = crearApiCliente(sb);
 //   </script>
 //
-// La clave "anon" es pública: lo que protege los datos son las reglas de
+// La publishable key (antes "anon") es pública: lo que protege los datos son las reglas de
 // la base de datos (003_seguridad.sql), no esconder la clave.
 // =====================================================================
 
