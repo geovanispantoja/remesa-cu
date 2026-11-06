@@ -231,6 +231,8 @@ export function crearApiAdmin(sb, { correoAdmin }) {
     },
     salir: () => correr(sb.auth.signOut()),
     sesion: async () => (await correr(sb.auth.getSession())).session,
+    esAdmin: () => correr(sb.rpc('es_admin')),
+    cambiarContrasena: (nueva) => correr(sb.auth.updateUser({ password: nueva })),
 
     // Tablero
     resumen: (desde, hasta) => rpc('admin_resumen', { p_desde: desde ?? null, p_hasta: hasta ?? null }),

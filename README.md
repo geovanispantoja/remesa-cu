@@ -8,10 +8,12 @@ remesa-cu/
 │   ├── migraciones/          001…005, en orden (esquema, lógica, seguridad, archivos, datos)
 │   ├── instalar_todo.sql     las 5 juntas, para pegar de una vez
 │   └── limpiar_pruebas.sql   borra remesas de prueba
-├── compartido/remesa-api.js  funciones JS que usan la PWA y la web de admin
-├── pruebas/                  pruebas del backend en Postgres local
+├── compartido/
+│   ├── config.js             URL de Supabase + publishable key + correo del admin (llenar una vez)
+│   └── remesa-api.js         funciones JS que usan la PWA y la web de admin
+├── admin/                    web de admin (B): index.html, app.js, estilos.css
 ├── cliente/                  (próximo) PWA del cliente
-└── admin/                    (próximo) web de admin
+└── pruebas/                  pruebas del backend y de la web en local
 ```
 
 Todo es gratis: **GitHub Pages** sirve las dos webs (`/cliente/` y `/admin/`) y **Supabase** (plan gratis) pone la base de datos, el inicio de sesión y las fotos. No hay servidor propio que mantener.
@@ -127,6 +129,31 @@ El plan gratis pausa el proyecto si pasa una semana sin uso. En GitHub → **Set
 - `SUPABASE_PUBLISHABLE_KEY`: en Supabase → **Project Settings → API Keys**, la que empieza con `sb_publishable_…`. La `secret` (`sb_secret_…`) NO se usa nunca en las webs.
 
 Con eso, el workflow `mantener-activo.yml` le hace una consulta cada 3 días.
+
+### 6. Publicar las webs (GitHub Pages)
+1. En `compartido/config.js` pon tu `supabaseUrl` y tu `supabaseKey` (la `sb_publishable_…`). Si tu admin no usa `admin@remesa.cu`, cambia también `correoAdmin`. Haz commit.
+2. En GitHub → **Settings → Pages**: en *Source* elige **Deploy from a branch**, rama **main**, carpeta **/ (root)** → **Save**.
+3. Al minuto queda en `https://geovanispantoja.github.io/remesa-cu/admin/`. En el celular puedes usar "Agregar a pantalla de inicio" para tenerla como app.
+
+GitHub Pages gratis solo funciona si el repo es **público**. No pasa nada porque sea público: no tiene contraseñas, y la publishable key se puede ver por diseño.
+
+## Web de admin
+
+Solo pide la contraseña del usuario admin.
+
+| Sección | Para qué |
+|---|---|
+| **Remesas** | Resumen del mes y la lista ordenada por lo que hay que hacer primero. Las que el cliente "dice que pagó" salen arriba. |
+| **Detalle de una remesa** | El siguiente paso con un botón (confirmar Zelle → poner fecha → marcar entregada con foto del recibo), los datos, el dinero, el historial, las notas internas y el panel de WhatsApp. Después de cada paso, el WhatsApp ya viene preparado con la plantilla que toca. |
+| **Entregas** | Las entregas de un día agrupadas por municipio, el efectivo que necesitas, botones de llamar, avisar y entregar, y "Copiar ruta". |
+| **Nueva remesa** | Para clientes que solo escriben por WhatsApp. También sirve para un cliente con cuenta, usando sus familiares guardados. |
+| **Gestores** | Comisiones del mes y las que faltan por pagar, botón "Pagar", resumen por WhatsApp, alta y edición. |
+| **Cuentas Zelle** | Lo recibido en el mes y lo que falta por confirmar. Se pueden pausar o activar, y mandar por WhatsApp la lista de pendientes. |
+| **Clientes** | Buscar, cambiar el gestor, mandar WhatsApp, crear una remesa a nombre del cliente. |
+| **Plantillas** y **Ajustes** | Editar los textos de WhatsApp, la tarifa, los límites y la contraseña. |
+
+### Probarla en tu computadora sin tocar Supabase
+`pruebas/navegador/preparar.sh` levanta una copia local con datos de demo: necesita Postgres local y el binario de [PostgREST](https://github.com/PostgREST/postgrest/releases). Luego abre `http://localhost:8080/admin/` con la contraseña `admin123`. `node pruebas/navegador/admin.e2e.mjs` recorre toda la web en un navegador automático, y GitHub Actions lo corre en cada push.
 
 ### Para probar desde cero
 `supabase/limpiar_pruebas.sql` borra remesas, historial, mensajes y fotos, y reinicia los códigos en REM-0001. Conserva configuración, plantillas, gestores, cuentas y clientes.

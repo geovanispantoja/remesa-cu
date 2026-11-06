@@ -1,0 +1,14 @@
+{
+  "name": "Remesa.cu Admin",
+  "short_name": "Remesa admin",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#14211D",
+  "theme_color": "#14211D",
+  "icons": [
+    { "src": "icono.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icono-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
